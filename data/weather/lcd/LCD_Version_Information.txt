@@ -1,0 +1,12 @@
+Weather Station Codes:
+
+Philadelphia Int'l Airport, PA 		   = 72408013739
+Dover Air Force Base, DE 		   = 72408813707
+Allentown Lehigh Valley Int'l Airport, PA  = 72517014737
+Atlantic City Int'l Airport, NJ            = 72407093730	
+
+LCD gets updated Friday through Monday
+
+Last Pulled:	Weather_Data_7.dta
+Time Pulled:	3/31/20 at 10:14 am
+Data Included:	3/30/20 at 23:59
