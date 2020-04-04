@@ -7,7 +7,7 @@ Data preparation and analysis is predominantly conducted in Stata, but I have in
 
 There are similar (and broader) efforts underway by other researchers (for example, see Steve Cicala's [recent Twitter thread](https://twitter.com/SteveCicala/status/1240273368110202880)). I will link to them when their work goes live.
 
-![Results as of April 2, 2020](https://github.com/cseveren/PA-Electricity-Economic-Disruption/blob/master/output/dailydevs_both_model2.png =400x)
+![Results as of April 2, 2020](https://github.com/cseveren/PA-Electricity-Economic-Disruption/blob/master/output/dailydevs_both_model2.png)
 
 ## Data Sources
 * Electricity Data: from [PJM's API](https://www.pjm.com/markets-and-operations/etools/data-miner-2.aspx) (requires an account, but it easy to obtain one)
