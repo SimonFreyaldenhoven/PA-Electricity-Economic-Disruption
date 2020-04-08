@@ -1,7 +1,7 @@
 # An Electricity-Basic Index of Economic Disruption
 An electricity-based index of economic disruption for the Philadelphia area (and nearby regions).
 
-This model links electricity and weather data in the PECO load area (Philadelphia and suburban counties) in an attempt to measure economic disruption in response to COVID-19. I am attempting to update this twice a week, and am sharing the code if anyone wants to create similar measures. Documentation and discussion of analysis is provided in the PDF.
+This model links electricity and weather data in the PECO load area (Philadelphia and suburban counties) in an attempt to measure economic disruption in response to COVID-19. I am attempting to update this twice a week, and am sharing the code if anyone wants to create similar measures. Documentation and discussion of analysis is provided in the PDF [link](https://github.com/cseveren/PA-Electricity-Economic-Disruption/blob/master/output/ElectricityIndicator.pdf).
 
 Data preparation and analysis is predominantly conducted in Stata, but I have included CSV versions of the post-processed data in case you would prefer to use another software to analyze. If requested, I may try to produce similar code in R. 
 

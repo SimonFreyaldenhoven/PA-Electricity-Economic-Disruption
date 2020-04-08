@@ -5,7 +5,7 @@ cls
 clear
 
 cd		XXXXX // Users: set to local github repository
-local 	lastday 06apr2020 // Set last day sometime after most recent data; can help contain graphs
+local 	lastday 08apr2020 // Set last day sometime after most recent data; can help contain graphs
 
 
 *===== LET RUN =====*
