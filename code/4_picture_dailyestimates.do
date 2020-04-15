@@ -34,12 +34,18 @@ append using "`rcn_est'"
 
 replace day_after_mar1 = day_after_mar1+0.2 if model=="lcd"
 
-twoway (rcap max95 min95 day_after_mar1 if tin(1mar2020, `lastday') & model=="lcd", lc(ltblue) lw(vthin)) || ///
-		(scatter estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="lcd", mc(ltblue) ms(Oh) c(l) lc(gray) lw(vthin) lp(solid)) || ///
+gen		dow = dow(day_after_mar1)
+
+twoway (line estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="lcd", lc(gray) lw(vthin) lp(solid)) || ///
+		(rcap max95 min95 day_after_mar1 if tin(1mar2020, `lastday') & model=="lcd", lc(ltblue) lw(vthin)) || ///
+		(scatter estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="lcd" & dow>=1 & dow<=5, mc(ltblue) ms(O)) || ///
+		(scatter estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="lcd" & (dow==0 | dow==6), mc(ltblue) ms(Oh)) || ///
+		(line estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="rcn", lc(gray) lp(solid)) || ///
 		(rcap max95 min95 day_after_mar1 if tin(1mar2020, `lastday') & model=="rcn", lc(gs10) lw(vthin)) || ///
-		(scatter estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="rcn", mc(black) ms(Oh) c(l) lc(gray) lp(solid)), /// 
-		legend(pos(6) r(2) order(2 "LCD - Daily Point Estimate" 1 " LCD - 95\% Confidence Interval" 4 "RCN - Daily Point Estimate" 3 " RCN - 95\% Confidence Interval")) ///
-		xtitle("") ytitle("Estimated Daily Deviation (%)") yline(0, lp(solid) lc(black)) tline(16mar2020, lc(pink) ) tline(19mar2020, lc(red) )
+		(scatter estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="rcn" & dow>=1 & dow<=5, mc(black) ms(O)) || /// 
+		(scatter estimate day_after_mar1 if tin(1mar2020, `lastday') & model=="rcn" & (dow==0 | dow==6), mc(black) ms(Oh)), ///
+		legend(pos(6) r(2) order(3 "LCD - (weekday)" 4 "LCD - (weekend)" 2 " LCD - 95\% CI" 7 "RCN - (weekday)" 8 "RCN - (weekend)" 6 " RCN - 95\% CI")) ///
+		xtitle("") ytitle("Estimated Daily Deviation (%)") yline(0, lp(solid) lc(black)) tline(16mar2020, lc(pink)) tline(23mar2020, lc(red)) tline(1apr2020, lc(red) )
 
 
 graph export "./output/dailydevs_both_model2.png", replace
