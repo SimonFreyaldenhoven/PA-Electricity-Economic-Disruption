@@ -1,0 +1,125 @@
+\documentclass{article}[12pt]
+\usepackage[authoryear]{natbib}
+\usepackage[english]{babel}
+%\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{amsthm}
+\usepackage{epstopdf}
+\usepackage{commath}
+\usepackage{threeparttable}
+%\usepackage{subdepth}
+\usepackage{pstricks}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{xr}
+\usepackage{hyperref}
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage[en-US]{datetime2}
+\usepackage{color}
+
+\graphicspath{{input/}}
+
+\newtheorem{remark}{Remark}
+\newtheorem{ass}{Assumption}
+
+\title{Modeling policy responses to COVID-19}
+%\author{TD, SF, CS}
+
+\date{}
+\begin{document}
+
+\maketitle
+Let $y_{it}$ denote the economic outcome of interest. We are interested in the exponential phase of the virus spreading and denote the spread of the virus in state $i$ at time $t$ by $\eta_{it}$. Then, absent any intervention or change in behavior, we obtain the following stylized system:
+\begin{align}
+y_{it} &= \gamma \eta_{it} + \varepsilon_{it} \label{eq:of_interest_I}\\
+\eta_{it}&=\gamma_{i} \eta^*_{t} \\ 
+\eta^*_t &= c_o e^{c_1 t},
+\end{align}
+where $\eta^*_t$ is a common factor across states. Note that $c_1$ is closely tied to what is usually called the reproductive number $R_0$ in epidemiology.
+\begin{itemize}
+\item $\eta_{it}$ has the appealing property that $\eta_{it} = \gamma_{i} \eta^*_{t}  = \gamma_{j} \eta^*_{t-t_0} = \eta_{j(t-t_0)}$ for some $t_0$. Intuitively, one can think of $\gamma_i$ as measuring ``connectiveness'' of state $i$. A larger value will result in an earlier exposeure to the virus, and therefore an earlier onset of the exponential growth.
+\item One could add covariates $w_{it}$ and model \eqref{eq:of_interest_I} in a more realistic way (nonlinear, AR components, deviations from nonpandemic baseline, etc.). We will ignore this for now.
+\end{itemize}
+
+In practise, the growth rates $c_1$ will vary by state and depend on things like population density. Adding state-varying growth rates, we get
+\begin{align}
+y_{it} &= \gamma \eta_{it} + \varepsilon_{it} \label{eq:of_interest_II}\\
+\eta_{it}&=\gamma_{i} e^{c_i t}.
+\end{align}
+\begin{itemize}
+\item Intuitively, now $\gamma_i$ determines the time of the outbreak, and $c_i$ the slope.
+\end{itemize}
+
+With $c_i>0$, this is a non-stationary system that will inevitably explode (Another reason to make \eqref{eq:of_interest_II} nonlinear is to make sure $y_{it}$ does not go to $-\infty$). 
+
+However, even absent any policy intervention, there might be a voluntary change in behavior/sentiment $b_{it}$ as the public becomes aware of the health risks that will slow the spread of the virus. To allow for this possibility, we augment the system above as follows (functional form in \eqref{eq:of_interest_III} tbd), treating $b_{it}$ as unobserved.
+\begin{align}
+y_{it} &=  \gamma \eta_{it} + \phi b_{it} + \varepsilon_{it} \label{eq:of_interest_III}\\
+\eta_{it}&=\gamma_{i} e^{c_{it} t}= \gamma_{i} e^{(c^0_i + b_{it}) t}.  \label{eq:health_III}
+\end{align}
+\begin{remark}
+One could also think of $\eta_{it}$ as unobserved and instead assume access to some rough measure $x_{it}$ of $\eta_{it}$. (Or even a measure of lagged $\eta_{it}$). This might make things more complicated but is arguably more realistic.
+\end{remark}
+
+Under \eqref{eq:of_interest_III}-\eqref{eq:health_III}, sentiment change $b_{it}$ is identified off the time variation in the growth rate, and $c_i^0$ off the level of the state specific growth rate (there might be some normalization necessary here). We should be able to identify all parameters in this system.
+
+
+As a final piece, let $P_{it}$ denote a policy variable. For example, this could be an absorbing indicator for a lockdown order at the state level.  We obtain
+\begin{align}
+y_{it} &=  g(\{P_{it-m}\}_{m=-\infty}^{\infty}) + \gamma \eta_{it} + \phi b_{it} + \varepsilon_{it} \label{eq:of_interest_IV}\\
+\eta_{it}&=\gamma_{i} e^{c_{it} t}=\gamma_{i} e^{(c^0_i + b_{it} + g(\{P_{it-m}\}_{m=-\infty}^{\infty})) t}. \label{eq:health_IV}
+\end{align}
+The model in \eqref{eq:of_interest_IV} allows for effects of the policy $P_{it}$ prior to its introduction. One natural restriction would be to impose that $g(\{P_{it-m}\}_{m=-\infty}^{\infty}) =g(\{P_{i,t-m}\}_{m=0}^{\infty})$. Further, with finite data, we clearly have to assume that $g(\{z_{it-m}\}_{m=0}^{\infty}) = g(\{z_{it-m}\}_{m=0}^{M})$ for large enough $M$. Finally, if $P_{it} \in \{0,1\}$ and $P_{it} = 1$ is an absorbing state, $g(\{P_{it-m}\}_{m=0}^{M}) = \sum_{m=0}^M \beta_m P_{it-m}$ is without loss of generality. %Cite EventStudy.
+This yields
+\begin{align}
+y_{it} &=  \sum_{m=0}^M \beta^y_m P_{it-m} + \gamma \eta_{it} + \phi b_{it} + \varepsilon_{it} \label{eq:of_interest_V}\\
+\eta_{it}&=\gamma_{i} e^{c_{it} t}=\gamma_{i} e^{(c^0_i + b_{it} + \sum_{m=0}^M \beta^\eta_m P_{it-m} ) t}. \label{eq:health_V}
+\end{align}
+A great policy response would have large (positive) effects $\beta^\eta$ on public health, and small (negative) effects $\beta^y$ on the economy. Also note that, given the exponential function in $\eqref{eq:health_V}$ the scale of the two coefficients may be different. (Note: One could argue that $\eta_{it}$ should be allowed to enter \ref{eq:of_interest_V} more flexibly.)
+
+Unfortunately, the system in \eqref{eq:of_interest_V}-\eqref{eq:health_V} is unidentified without further restrictions and any necessary identifying assumptions will generally be untestable (Intuitively, the unoberved $b_{it}$ causes omitted variable bias). We next discuss a number of possible assumptions to achieve identification.
+\begin{ass}\label{ass:RD}
+The effect of the policy is static with an immediate impact ($\beta^y_m = \beta^\eta_m= 0 \; \forall m \ne 0$), and sentiment $b_{it}$ is ``smooth'' and changes sufficiently slow. Further, we have access to high frequency data (This is where the electricity data may come in really handy). 
+\end{ass}
+Under Assumption \ref{ass:RD}, the discontinuity at event time identifies $\beta^y$ and $\beta^\eta$.
+\begin{proof}[Comment]
+In order to maintain $\beta^\eta_m= 0 \; \forall m \ne 0$, we need to be careful in how we define $\eta_{it}$. I don't think it could just be ``reported cases by JHU''. This might be hard.
+\end{proof}
+
+\begin{ass} \label{ass:IV}
+We have access to one or more rough measures $\tilde b^k_{it}$ of sentiment $b_{it}$. (There might be some questionaires or something along those lines?).
+\end{ass}
+Under Assumption \ref{ass:IV}, IV strategies can potentially be used to control for $b_{it}$.
+\begin{proof}[Comment]
+Simply substituting $\tilde b_{it}$ for $b_{it}$ in $\eqref{eq:of_interest_V}$ and estimating
+\begin{align}
+y_{it} &=  \sum_{m=0}^M \beta^y_m P_{it-m} + \gamma \eta_{it} + \tilde \phi \tilde b_{it} + \varepsilon_{it}
+\end{align}
+will be biased due to the measurement error in $\tilde b_{it}$. So we need an instrument for $\tilde b_{it}$. If we had multiple measures $\tilde b_{it}$, these are candidates. Leads of the policy might also be a candidate.
+\end{proof}
+
+\begin{ass} \label{ass:FS}
+Sentiment $b_{it}$ evolves as a low dimensional object/has a factor structure: $b_{it}=\lambda_i F_t$. This states that up to the state specific $\lambda_i$, the dynamics in sentiment are similar across states. (There might be room to allow for a Republican/democratic divide or something along those lines)
+\end{ass}
+Under Assumption \ref{ass:FS}, IFE/CCE/Synthetic control methods can potentially identify the effect.
+\begin{proof}[Comment]
+
+\end{proof}
+
+
+
+%Finally, identifying $b_{it}$ is further complicated by the fact that sentimentis likely also affected by $P_{it}$. But the counterfactual we'd be interested in is probably one where $b_{it}$ had evoloved absent an intervention.
+
+\end{document}
