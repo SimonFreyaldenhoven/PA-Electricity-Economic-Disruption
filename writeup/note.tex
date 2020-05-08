@@ -73,7 +73,7 @@ y_{it} &=  \gamma \eta_{it} + \phi b_{it} + \varepsilon_{it} \label{eq:of_intere
 One could also think of $\eta_{it}$ as unobserved and instead assume access to some rough measure $x_{it}$ of $\eta_{it}$. (Or even a measure of lagged $\eta_{it}$). This might make things more complicated but is arguably more realistic.
 \end{remark}
 
-Under \eqref{eq:of_interest_III}-\eqref{eq:health_III}, sentiment change $b_{it}$ is identified off the time variation in the growth rate, and $c_i^0$ off the level of the state specific growth rate (there might be some normalization necessary here). We should be able to identify all parameters in this system.
+Under \eqref{eq:of_interest_III}-\eqref{eq:health_III}, sentiment change $b_{it}$ is identified off the time variation in the growth rate, and $c_i^0$ is identified  off the level of the state specific growth rate (there might be some normalization necessary here). We should be able to identify all parameters in this system.
 
 
 As a final piece, let $P_{it}$ denote a policy variable. For example, this could be an absorbing indicator for a lockdown order at the state level.  We obtain
@@ -114,11 +114,6 @@ will be biased due to the measurement error in $\tilde b_{it}$. So we need an in
 Sentiment $b_{it}$ evolves as a low dimensional object/has a factor structure: $b_{it}=\lambda_i F_t$. This states that up to the state specific $\lambda_i$, the dynamics in sentiment are similar across states. (There might be room to allow for a Republican/democratic divide or something along those lines)
 \end{ass}
 Under Assumption \ref{ass:FS}, IFE/CCE/Synthetic control methods can potentially identify the effect.
-\begin{proof}[Comment]
-
-\end{proof}
-
-
 
 %Finally, identifying $b_{it}$ is further complicated by the fact that sentimentis likely also affected by $P_{it}$. But the counterfactual we'd be interested in is probably one where $b_{it}$ had evoloved absent an intervention.
 
