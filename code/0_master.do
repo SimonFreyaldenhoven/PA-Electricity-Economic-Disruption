@@ -6,7 +6,7 @@ clear
 
 *cd		XXXXX // Users: set to local github repository
 cd	C:\GitHub\PA-Electricity-Economic-Disruption
-local 	lastday 30apr2020 // Set last day sometime after most recent data; can help contain graphs
+local 	lastday 6may2020 // Set last day sometime after most recent data; can help contain graphs
 
 
 *===== LET RUN =====*
@@ -20,6 +20,8 @@ do		"./code/3_analyze_rcn.do"	 			"`lastday'"
 do		"./code/4_picture_rawweekly.do"	 		/* Might need to fiddle with dates in here by hand */
 
 do		"./code/4_picture_dailyestimates.do" 	"`lastday'"
+
+do		"./code/5_keephourlyresiduals.do"
 
 local datafiles: dir "./data/intermediate/" files "*.dta"
 
