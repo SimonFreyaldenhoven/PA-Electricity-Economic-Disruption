@@ -1,8 +1,28 @@
 
 use 	"./data/intermediate/weather_rcn_electricity.dta", clear
 
-** Main Model, save residuals as "h_resids" **
+** Original Model, save residuals as "h_resids" **
 reghdfe lmw dayc1 dayc2 dayc3 daily_lmw_lag364 daily_lmw_lag365 daily_lmw_lag371 sandy p_calc p_calc2 p_calc_w p_calc2_w rhum rhum_*, a(hxdoy hxdow hxtemp) vce(robust) res(h_resids)
+
+** Degree Day Model, save residuals as "dd_resids" **
+
+gen 	hdd = max(18-t_calc,0)
+gen 	cdd = max(t_calc-18,0)
+
+foreach h of numlist 0/23 {
+	gen		hdd_hr_`h' = hdd if hour==`h'
+	replace hdd_hr_`h' = 0 if hour!=`h'
+	
+	gen		cdd_hr_`h' = cdd if hour==`h'
+	replace cdd_hr_`h' = 0 if hour!=`h'
+}
+
+
+reghdfe lmw ?dd_hr_* if tin(1jan2015 00:00,) , noa vce(robust) res(dd_resids_nofe)
+
+reghdfe lmw ?dd_hr_* if tin(1jan2015 00:00,) , a(dow hour) vce(robust) res(dd_resids_fe1)
+
+reghdfe lmw ?dd_hr_* if tin(1jan2015 00:00,) , a(hxdoy hxdow hour) vce(robust) res(dd_resids_fe2)
 
 save 	"./data/intermediate/resids_rcn.dta", replace
 
