@@ -6,7 +6,7 @@ clear
 
 *cd		XXXXX // Users: set to local github repository
 cd	C:\GitHub\PA-Electricity-Economic-Disruption
-local 	lastday 6may2020 // Set last day sometime after most recent data; can help contain graphs
+local 	lastday 21may2020 // Set last day sometime after most recent data; can help contain graphs
 
 
 *===== LET RUN =====*
