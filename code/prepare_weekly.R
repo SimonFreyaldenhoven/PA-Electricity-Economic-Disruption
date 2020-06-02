@@ -3,16 +3,26 @@ library('ggplot2')
 library('lubridate')
 library('dplyr')
 library('tidyr')
+library(reshape2)
 
 setwd('C:/Users/Simon/Documents/GitHub/PA-Electricity-Economic-Disruption/')
 input_location='./data/temp/data_PE.Rds'
+output_location = './data/temp/extended_data_PE.Rds'
+
 data_in=readRDS(input_location)
 data_in$datetime_beginning_ept=force_tz(data_in$datetime_beginning_ept, "US/Eastern")
-outcome="mw"
+outcome="lmw"
 
 main <- function(data_in, outcome) {
   weekly_data <- create_weeks(data_in,outcome)
-  weekly_data <- create_features(weekly_data)
+  
+  this_spring <- weekly_data[(weekly_data$date_begin >= ymd("2020-03-01") & weekly_data$date_begin <= ymd("2020-05-15")),]
+  last_spring <- weekly_data[(weekly_data$date_begin >= ymd("2019-03-01") & weekly_data$date_begin <= ymd("2019-05-15")),]
+  compare_weekly_pattern(this_spring, last_spring)#This year
+
+  weekly_data <- add_features(weekly_data)
+  saveRDS(weekly_data,output_location)
+  
 }
 
 #Main functions 
@@ -39,30 +49,41 @@ create_weeks <- function(data_in, outcome) {
  
   
   weekly_data <- spread(weekly_data, hour_of_week, outcome) 
+  weekly_data$date_begin= ymd(weekly_data$date_begin)
   return(weekly_data)
 }
 
-create_features <- function(weekly_data, outcome) {
+compare_weekly_pattern <- function(current, past) {
+  
+  current_hourly_avg = colMeans(current[,-1], na.rm = TRUE)
+  past_hourly_avg = colMeans(past[,-1], na.rm = TRUE)
+  full_set=as.data.frame(t(rbind(current_hourly_avg, past_hourly_avg)))
+  full_set$hour_of_week = 0:(length(hourly_avg)-1)
+  full_set=melt(full_set, id='hour_of_week')
+  
+  ggplot(full_set, aes(x = hour_of_week, y = value, color=variable, group=variable)) + geom_line() + geom_point() +
+  scale_x_continuous(name="Hour of week", breaks=seq(0,168,24))
+}
+
+add_features <- function(weekly_data, outcome) {
   temp_data <- head(weekly_data,-1)#drop current (partial) week for now
-  temp_data <- temp[1014:968,]#drop current (partial) week for now
-  hourly_avg = colMeans(temp_data[,-1], na.rm = TRUE)
-  ggplot(data.frame(hour_of_week = 0:(length(hourly_avg)-1), average_outcome = hourly_avg),
-         aes(x = hour_of_week, y = average_outcome)) + geom_line() + geom_point() + scale_x_continuous(name="Hour of week", breaks=seq(0,168,24))
-  
-  weekday_rush=rowMeans(temp_data[,c(65,66, 89,90, 113,114, 137,138)]) #Mon-Th 5-6pm
-  weekday_night= rowMeans(temp_data[,c(73,74,75,76, 97,98,99,100, 121,122,123,124, 145,146,147,148 )]) #Mon-Th 1-4am
-  weekend_night= rowMeans(temp_data[,c(74,75,76, 98,99,100, 122,123,124, 146,147,148 )]) #Mon-Th 2-4am
-  #Afternoon dip clear in winter, AC in summer?
-  #Morning peak at 7 am during th week, 10 am on weekends.
-  
+
+  extra_features=data.frame(date_begin=temp_data$date_begin)
+  extra_features$weekday_rush=rowMeans(temp_data[,c(65,66, 89,90, 113,114, 137,138)]) #Mon-Th 5-6pm
+  extra_features$weekday_night= rowMeans(temp_data[,c(73,74,75,76, 97,98,99,100, 121,122,123,124, 145,146,147,148 )]) #Mon-Th 1-4am
+  commuting_peak= 1#weekday difference betwen 7 am and 9am 
+  pm_am= #Weekday diff between PM peak and AM peak
+  #Morning peak at 7 am during th week, 10 am on weekends. relevant?
+  #Afternoon dip clear in winter, AC in summer? relevant?
+    
   pcas = extract_pcas(temp_data[,-1], 10)
   plot_pcas(pcas)
-  
-  
-  #full_data <- transform(temp_data, weekly_avg = rowMeans(temp_data[,-1], na.rm = TRUE)) #Add weekly average
-  full_data <- cbind(temp_data,pcas$factors[,1:2]) #Add PCs
-  
-  return(weekly_data)
+  extra_features$pca1 = pcas$factors[,1]
+  extra_features$pca2 = pcas$factors[,2]
+  extra_features$pca3 = pcas$factors[,3]
+
+  full_data <- merge(temp_data,extra_features,by=c("date_begin")) 
+  return(full_data)
 }
 
 #Helper fucntions
@@ -89,5 +110,7 @@ plot_pcas <- function(pcas) {
   
   ggsave('./output/descriptive/weekly_pcas.png')
 }
+
+
 
 main(data_in, y)
