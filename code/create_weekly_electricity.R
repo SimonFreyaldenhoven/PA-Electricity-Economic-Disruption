@@ -11,7 +11,7 @@ output_location = './data/temp/extended_data_PE.Rds'
 
 data_in=readRDS(input_location)
 data_in$datetime_beginning_ept=force_tz(data_in$datetime_beginning_ept, "US/Eastern")
-outcome="lmw"
+outcome="dd_resids_nofe"
 
 main <- function(data_in, outcome) {
   weekly_data <- create_weeks(data_in,outcome)
@@ -27,7 +27,7 @@ main <- function(data_in, outcome) {
 
 #Main functions 
 create_weeks <- function(data_in, outcome) {
-
+  data_in[outcome]=as.numeric(data_in[[outcome]])
   start_dates=data_in[(wday(data_in$datetime_beginning_ept,label = TRUE, abbr = FALSE)=='Saturday') 
                       ,'datetime_beginning_ept']
   start_dates=start_dates[(hour(start_dates$datetime_beginning_ept)==0),]
@@ -58,7 +58,7 @@ compare_weekly_pattern <- function(current, past) {
   current_hourly_avg = colMeans(current[,-1], na.rm = TRUE)
   past_hourly_avg = colMeans(past[,-1], na.rm = TRUE)
   full_set=as.data.frame(t(rbind(current_hourly_avg, past_hourly_avg)))
-  full_set$hour_of_week = 0:(length(hourly_avg)-1)
+  full_set$hour_of_week = 0:(length(current_hourly_avg)-1)
   full_set=melt(full_set, id='hour_of_week')
   
   ggplot(full_set, aes(x = hour_of_week, y = value, color=variable, group=variable)) + geom_line() + geom_point() +
@@ -72,7 +72,7 @@ add_features <- function(weekly_data, outcome) {
   extra_features$weekday_rush=rowMeans(temp_data[,c(65,66, 89,90, 113,114, 137,138)]) #Mon-Th 5-6pm
   extra_features$weekday_night= rowMeans(temp_data[,c(73,74,75,76, 97,98,99,100, 121,122,123,124, 145,146,147,148 )]) #Mon-Th 1-4am
   commuting_peak= 1#weekday difference betwen 7 am and 9am 
-  pm_am= #Weekday diff between PM peak and AM peak
+  pm_am= 1#Weekday diff between PM peak and AM peak
   #Morning peak at 7 am during th week, 10 am on weekends. relevant?
   #Afternoon dip clear in winter, AC in summer? relevant?
     
@@ -113,4 +113,4 @@ plot_pcas <- function(pcas) {
 
 
 
-main(data_in, y)
+main(data_in, outcome)
